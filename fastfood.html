@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vega-Lite Bar Chart</title>
+    <meta charset="utf-8" />
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+
+    <style media="screen">
+      /* Add space between Vega-Embed links  */
+      .vega-actions a {
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Empresas de comida rápida</h1>
+    <h2>Relación entre ventas y locales</h2>
+    <!-- Container for the visualization -->
+    <div id="vis"></div>
+
+    <script>
+      // Assign the specification to a local variable vlSpec.
+      var vlSpec = {
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 400,
+  "height": 400,
+  "style": "cell",
+  "data": [
+    {
+      "name": "source_0",
+      "url": "https://download.data.world/s/3lk3ophgqsncjjslaz2hie55tddwad",
+      "format": {"type": "csv", "delimiter": ","},
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"loc\"]) && isFinite(+datum[\"loc\"]) && isValid(datum[\"sales\"]) && isFinite(+datum[\"sales\"]) && isValid(datum[\"vpl\"]) && isFinite(+datum[\"vpl\"])"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "symbol",
+      "style": ["point"],
+      "from": {"data": "source_0"},
+      "encode": {
+        "update": {
+          "opacity": {"value": 0.7},
+          "fill": {"value": "transparent"},
+          "stroke": {"value": "#4c78a8"},
+          "tooltip": {"signal": "''+datum[\"chain\"]"},
+          "x": {"scale": "x", "field": "loc"},
+          "y": {"scale": "y", "field": "sales"},
+          "size": {"scale": "size", "field": "vpl"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "source_0", "field": "loc"},
+      "range": [0, {"signal": "width"}],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "source_0", "field": "sales"},
+      "range": [{"signal": "height"}, 0],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "size",
+      "type": "linear",
+      "domain": {"data": "source_0", "field": "vpl"},
+      "range": [0, 361],
+      "zero": true
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Locales",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Ventas",
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "zindex": 0
+    }
+  ],
+  "legends": [
+    {
+      "size": "size",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "symbolType": "circle",
+      "title": "vpl",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "transparent"},
+            "stroke": {"value": "#4c78a8"},
+            "opacity": {"value": 0.7}
+          }
+        }
+      }
+    }
+  ]
+}
+      ;
+
+      // Embed the visualization in the container with id `vis`
+      vegaEmbed('#vis', vlSpec);
+    </script>
+    
+    
+      <script src="https://d3js.org/d3.v5.min.js"></script>
+     <h2> Volumen de ventas y locales</h2>
+     <p></p>
+ 
+  <div id="dos">  </div>
+    
+    <script>
+    var w50=
+[{"rank":1,"chain":"McDonald's","sales_u_s_2017":37500000000,"of_locations_u_s":14036},
+{"rank":2,"chain":"Starbucks","sales_u_s_2017":13200000000,"of_locations_u_s":13930},
+{"rank":3,"chain":"Subway","sales_u_s_2017":10800000000,"of_locations_u_s":25908},
+{"rank":4,"chain":"Burger King","sales_u_s_2017":9800000000,"of_locations_u_s":7226},
+{"rank":5,"chain":"Taco Bell","sales_u_s_2017":9300000000,"of_locations_u_s":6446},
+{"rank":6,"chain":"Wendy's","sales_u_s_2017":9300000000,"of_locations_u_s":5769},
+{"rank":7,"chain":"Dunkin' Donuts","sales_u_s_2017":5900000000,"of_locations_u_s":12538},
+{"rank":8,"chain":"Chick-fil-A","sales_u_s_2017":9000000000,"of_locations_u_s":2225},
+{"rank":9,"chain":"Domino's","sales_u_s_2017":5900000000,"of_locations_u_s":5587},
+{"rank":10,"chain":"Pizza Hut","sales_u_s_2017":5500000000,"of_locations_u_s":7522},
+{"rank":11,"chain":"Panera Bread","sales_u_s_2017":4500000000,"of_locations_u_s":2043},
+{"rank":12,"chain":"Chipotle","sales_u_s_2017":4500000000,"of_locations_u_s":2371},
+{"rank":13,"chain":"KFC","sales_u_s_2017":4400000000,"of_locations_u_s":4019},
+{"rank":14,"chain":"Sonic Drive-In","sales_u_s_2017":4400000000,"of_locations_u_s":3593},
+{"rank":15,"chain":"Dairy Queen","sales_u_s_2017":3600000000,"of_locations_u_s":4455},
+{"rank":16,"chain":"Arby's","sales_u_s_2017":3600000000,"of_locations_u_s":3415},
+{"rank":17,"chain":"Little Caesars","sales_u_s_2017":3500000000,"of_locations_u_s":4332},
+{"rank":18,"chain":"Jack in the Box","sales_u_s_2017":3500000000,"of_locations_u_s":2251},
+{"rank":19,"chain":"Popeye's","sales_u_s_2017":3200000000,"of_locations_u_s":2231},
+{"rank":20,"chain":"Papa John's","sales_u_s_2017":3100000000,"of_locations_u_s":3314},
+{"rank":21,"chain":"Panda Express","sales_u_s_2017":2300000000,"of_locations_u_s":2011},
+{"rank":22,"chain":"Whataburger","sales_u_s_2017":2300000000,"of_locations_u_s":821},
+{"rank":23,"chain":"Hardee's","sales_u_s_2017":2200000000,"of_locations_u_s":1864},
+{"rank":24,"chain":"Jimmy John's","sales_u_s_2017":2100000000,"of_locations_u_s":2755},
+{"rank":25,"chain":"Zaxby's","sales_u_s_2017":2100000000,"of_locations_u_s":890},
+{"rank":26,"chain":"Carl's Jr.","sales_u_s_2017":1500000000,"of_locations_u_s":1156},
+{"rank":27,"chain":"Five Guys","sales_u_s_2017":1400000000,"of_locations_u_s":1321},
+{"rank":28,"chain":"Culver's","sales_u_s_2017":1400000000,"of_locations_u_s":643},
+{"rank":29,"chain":"Bojangles'","sales_u_s_2017":1300000000,"of_locations_u_s":764},
+{"rank":30,"chain":"Wingstop","sales_u_s_2017":1100000000,"of_locations_u_s":1027}]
+
+
+
+
+
+var w=800,h=700
+var svg=d3.select("div#dos").append("svg").attr("width",w).attr("height",h);
+
+svg.selectAll("text").data(w50).enter()
+  .append("text")
+     .attr("x",225)
+     .attr("y",function(d,i) {return (i+1)*20})
+     .text((d)=>d.chain)
+     .attr("fill",'green');
+
+var ventas=
+d3.scaleLinear().domain([0,37500000000]).range([0,200]);
+
+svg.selectAll("rect.ventas").data(w50).enter()
+  .append("rect")
+     .attr("x",(d)=>200-ventas(d.sales_u_s_2017))
+     .attr("y",(d,i)=> (i)*20)
+     .attr("width", (d)=>ventas(d.sales_u_s_2017))
+     .attr("height",19)
+     .attr("fill",'blue')
+     .append("title").text((d)=>"U$S"+d.sales_u_s_2017.toLocaleString())
+
+var sucursales= d3.scaleLinear().domain([0,
+    d3.max(w50, (d)=> d.of_locations_u_s)]).range([0,200]);
+
+
+svg.selectAll("rect.sucursales").data(w50).enter()
+  .append("rect")
+     .attr("x",350)
+     .attr("y",(d,i)=> 3+(i)*20)
+     .attr("width", (d)=>sucursales(d.of_locations_u_s))
+     .attr("height",19)
+     .attr("fill",'orange')
+     .append("title").text((d)=>d.of_locations_u_s.toLocaleString())
+
+    </script>
+
+
+   <h2> Porcentaje sobre el total de ventas y de locales</h2>
+    
+  <div id="tres">  </div>  
+    
+     <script>
+      // Assign the specification to a local variable vlSpec.
+      var vlSpec2 = 
+    {
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "autosize": "pad",
+  "padding": 5,
+  "width": 600,
+  "style": "cell",
+  "data": [
+    {"name": "selector022_store"},
+    {
+      "name": "data-20173a44b37c5a2d7f6bc13d106c0c73",
+      "values": [
+        {
+          "rank": 8,
+          "chain": "Chick-fil-A",
+          "sales": 9000000000,
+          "loc": 2225,
+          "vpl": 4044944
+        },
+        {
+          "rank": 22,
+          "chain": "Whataburger",
+          "sales": 2300000000,
+          "loc": 821,
+          "vpl": 2801462
+        },
+        {
+          "rank": 1,
+          "chain": "McDonald's",
+          "sales": 37500000000,
+          "loc": 14036,
+          "vpl": 2671701
+        },
+        {
+          "rank": 25,
+          "chain": "Zaxby's",
+          "sales": 2100000000,
+          "loc": 890,
+          "vpl": 2359551
+        },
+        {
+          "rank": 11,
+          "chain": "Panera Bread",
+          "sales": 4500000000,
+          "loc": 2043,
+          "vpl": 2202643
+        },
+        {
+          "rank": 28,
+          "chain": "Culver's",
+          "sales": 1400000000,
+          "loc": 643,
+          "vpl": 2177294
+        },
+        {
+          "rank": 12,
+          "chain": "Chipotle",
+          "sales": 4500000000,
+          "loc": 2371,
+          "vpl": 1897933
+        },
+        {
+          "rank": 29,
+          "chain": "Bojangles'",
+          "sales": 1300000000,
+          "loc": 764,
+          "vpl": 1701571
+        },
+        {
+          "rank": 6,
+          "chain": "Wendy's",
+          "sales": 9300000000,
+          "loc": 5769,
+          "vpl": 1612064
+        },
+        {
+          "rank": 18,
+          "chain": "Jack in the Box",
+          "sales": 3500000000,
+          "loc": 2251,
+          "vpl": 1554865
+        },
+        {
+          "rank": 5,
+          "chain": "Taco Bell",
+          "sales": 9300000000,
+          "loc": 6446,
+          "vpl": 1442755
+        },
+        {
+          "rank": 19,
+          "chain": "Popeye's",
+          "sales": 3200000000,
+          "loc": 2231,
+          "vpl": 1434334
+        },
+        {
+          "rank": 4,
+          "chain": "Burger King",
+          "sales": 9800000000,
+          "loc": 7226,
+          "vpl": 1356214
+        },
+        {
+          "rank": 26,
+          "chain": "Carl's Jr.",
+          "sales": 1500000000,
+          "loc": 1156,
+          "vpl": 1297578
+        },
+        {
+          "rank": 14,
+          "chain": "Sonic Drive-In",
+          "sales": 4400000000,
+          "loc": 3593,
+          "vpl": 1224603
+        },
+        {
+          "rank": 23,
+          "chain": "Hardee's",
+          "sales": 2200000000,
+          "loc": 1864,
+          "vpl": 1180258
+        },
+        {
+          "rank": 21,
+          "chain": "Panda Express",
+          "sales": 2300000000,
+          "loc": 2011,
+          "vpl": 1143710
+        },
+        {
+          "rank": 13,
+          "chain": "KFC",
+          "sales": 4400000000,
+          "loc": 4019,
+          "vpl": 1094800
+        },
+        {
+          "rank": 30,
+          "chain": "Wingstop",
+          "sales": 1100000000,
+          "loc": 1027,
+          "vpl": 1071081
+        },
+        {
+          "rank": 27,
+          "chain": "Five Guys",
+          "sales": 1400000000,
+          "loc": 1321,
+          "vpl": 1059803
+        },
+        {
+          "rank": 9,
+          "chain": "Domino's",
+          "sales": 5900000000,
+          "loc": 5587,
+          "vpl": 1056023
+        },
+        {
+          "rank": 16,
+          "chain": "Arby's",
+          "sales": 3600000000,
+          "loc": 3415,
+          "vpl": 1054173
+        },
+        {
+          "rank": 2,
+          "chain": "Starbucks",
+          "sales": 13200000000,
+          "loc": 13930,
+          "vpl": 947595
+        },
+        {
+          "rank": 20,
+          "chain": "Papa John's",
+          "sales": 3100000000,
+          "loc": 3314,
+          "vpl": 935425
+        },
+        {
+          "rank": 15,
+          "chain": "Dairy Queen",
+          "sales": 3600000000,
+          "loc": 4455,
+          "vpl": 808081
+        },
+        {
+          "rank": 17,
+          "chain": "Little Caesars",
+          "sales": 3500000000,
+          "loc": 4332,
+          "vpl": 807941
+        },
+        {
+          "rank": 24,
+          "chain": "Jimmy John's",
+          "sales": 2100000000,
+          "loc": 2755,
+          "vpl": 762250
+        },
+        {
+          "rank": 10,
+          "chain": "Pizza Hut",
+          "sales": 5500000000,
+          "loc": 7522,
+          "vpl": 731189
+        },
+        {
+          "rank": 7,
+          "chain": "Dunkin' Donuts",
+          "sales": 5900000000,
+          "loc": 12538,
+          "vpl": 470569
+        },
+        {
+          "rank": 3,
+          "chain": "Subway",
+          "sales": 10800000000,
+          "loc": 25908,
+          "vpl": 416860
+        }
+      ]
+    },
+    {
+      "name": "data_0",
+      "source": "data-20173a44b37c5a2d7f6bc13d106c0c73",
+      "transform": [
+        {
+          "type": "joinaggregate",
+          "as": ["TotalSales"],
+          "ops": ["sum"],
+          "fields": ["sales"]
+        },
+        {
+          "type": "formula",
+          "expr": "100*datum.sales / datum.TotalSales",
+          "as": "PercentOfSales"
+        },
+        {
+          "type": "joinaggregate",
+          "as": ["TotalLoc"],
+          "ops": ["sum"],
+          "fields": ["loc"]
+        },
+        {
+          "type": "formula",
+          "expr": "100*datum.loc / datum.TotalLoc",
+          "as": "PercentOfLoc"
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "data_0",
+      "transform": [
+        {
+          "type": "stack",
+          "groupby": ["rank"],
+          "field": "PercentOfSales",
+          "sort": {"field": ["chain"], "order": ["descending"]},
+          "as": ["PercentOfSales_start", "PercentOfSales_end"],
+          "offset": "zero"
+        },
+        {
+          "type": "filter",
+          "expr": "datum[\"PercentOfSales\"] !== null && !isNaN(datum[\"PercentOfSales\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_2",
+      "source": "data_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"PercentOfSales\"] !== null && !isNaN(datum[\"PercentOfSales\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_3",
+      "source": "data_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"PercentOfLoc\"] !== null && !isNaN(datum[\"PercentOfLoc\"]) && datum[\"PercentOfSales\"] !== null && !isNaN(datum[\"PercentOfSales\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {"name": "y_step", "value": 20},
+    {
+      "name": "height",
+      "update": "bandspace(domain('y').length, 0.1, 0.05) * y_step"
+    },
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "selector022",
+      "update": "{\"PercentOfSales\": selector022_PercentOfSales}"
+    },
+    {"name": "selector022_PercentOfSales"},
+    {
+      "name": "selector022_PercentOfSales",
+      "on": [
+        {
+          "events": {"signal": "selector022_translate_delta"},
+          "update": "panLinear(selector022_translate_anchor.extent_x, -selector022_translate_delta.x / width)"
+        },
+        {
+          "events": {"signal": "selector022_zoom_delta"},
+          "update": "zoomLinear(domain(\"x\"), selector022_zoom_anchor.x, selector022_zoom_delta)"
+        },
+        {"events": [{"source": "scope", "type": "dblclick"}], "update": "null"}
+      ],
+      "push": "outer"
+    },
+    {
+      "name": "selector022_rank",
+      "on": [
+        {
+          "events": {"signal": "selector022_translate_delta"},
+          "update": "panLinear(selector022_translate_anchor.extent_y, selector022_translate_delta.y / height)"
+        },
+        {
+          "events": {"signal": "selector022_zoom_delta"},
+          "update": "zoomLinear(domain(\"y\"), selector022_zoom_anchor.y, selector022_zoom_delta)"
+        },
+        {"events": [{"source": "scope", "type": "dblclick"}], "update": "null"}
+      ]
+    },
+    {
+      "name": "selector022_tuple",
+      "on": [
+        {
+          "events": [
+            {"signal": "selector022_PercentOfSales || selector022_rank"}
+          ],
+          "update": "selector022_PercentOfSales && selector022_rank ? {unit: \"layer_2\", fields: selector022_tuple_fields, values: [selector022_PercentOfSales,selector022_rank]} : null"
+        }
+      ]
+    },
+    {
+      "name": "selector022_tuple_fields",
+      "value": [
+        {"field": "PercentOfSales", "channel": "x", "type": "R"},
+        {"field": "rank", "channel": "y", "type": "E"}
+      ]
+    },
+    {
+      "name": "selector022_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [{"source": "scope", "type": "mousedown"}],
+          "update": "{x: x(unit), y: y(unit), extent_x: domain(\"x\"), extent_y: domain(\"y\")}"
+        }
+      ]
+    },
+    {
+      "name": "selector022_translate_delta",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {"source": "scope", "type": "mousedown"},
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: selector022_translate_anchor.x - x(unit), y: selector022_translate_anchor.y - y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "selector022_zoom_anchor",
+      "on": [
+        {
+          "events": [{"source": "scope", "type": "wheel", "consume": true}],
+          "update": "{x: invert(\"x\", x(unit)), y: invert(\"y\", y(unit))}"
+        }
+      ]
+    },
+    {
+      "name": "selector022_zoom_delta",
+      "on": [
+        {
+          "events": [{"source": "scope", "type": "wheel", "consume": true}],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        }
+      ]
+    },
+    {
+      "name": "selector022_modify",
+      "update": "modify(\"selector022_store\", selector022_tuple, true)"
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "rect",
+      "clip": true,
+      "style": ["bar"],
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "color", "field": "chain"},
+          "x": {"scale": "x", "field": "PercentOfSales_end"},
+          "x2": {"scale": "x", "field": "PercentOfSales_start"},
+          "yc": {"scale": "y", "field": "rank", "band": 0.5},
+          "height": {"value": 2}
+        }
+      }
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "text",
+      "clip": true,
+      "style": ["text"],
+      "from": {"data": "data_2"},
+      "encode": {
+        "update": {
+          "align": {"value": "left"},
+          "baseline": {"value": "middle"},
+          "dx": {"value": 10},
+          "fill": {"scale": "color", "field": "chain"},
+          "x": {"scale": "x", "field": "PercentOfSales"},
+          "y": {"scale": "y", "field": "rank", "band": 0.5},
+          "text": {"signal": "''+datum[\"chain\"]"}
+        }
+      }
+    },
+    {
+      "name": "layer_2_marks",
+      "type": "symbol",
+      "clip": true,
+      "style": ["circle"],
+      "from": {"data": "data_3"},
+      "encode": {
+        "update": {
+          "opacity": {"value": 0.7},
+          "size": {"scale": "size", "field": "PercentOfLoc"},
+          "fill": {"scale": "color", "field": "chain"},
+          "tooltip": {
+            "signal": "{\"chain\": ''+datum[\"chain\"], \"sales\": format(datum[\"sales\"], \"\"), \"loc\": format(datum[\"loc\"], \"\"), \"PercentOfLoc\": format(datum[\"PercentOfLoc\"], \"\"), \"PercentOfSales\": format(datum[\"PercentOfSales\"], \"\")}"
+          },
+          "x": {"scale": "x", "field": "PercentOfSales"},
+          "y": {"scale": "y", "field": "rank", "band": 0.5},
+          "shape": {"value": "circle"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {
+        "fields": [
+          {"data": "data_1", "field": "PercentOfSales_start"},
+          {"data": "data_1", "field": "PercentOfSales_end"},
+          {"data": "data_2", "field": "PercentOfSales"},
+          {"data": "data_3", "field": "PercentOfSales"}
+        ]
+      },
+      "domainRaw": {"signal": "selector022[\"PercentOfSales\"]"},
+      "range": [0, {"signal": "width"}],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "fields": [
+          {"data": "data_1", "field": "rank"},
+          {"data": "data_2", "field": "rank"},
+          {"data": "data_3", "field": "rank"}
+        ],
+        "sort": true
+      },
+      "range": {"step": {"signal": "y_step"}},
+      "paddingInner": 0.1,
+      "paddingOuter": 0.05
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {
+        "fields": [
+          {"data": "data_1", "field": "chain"},
+          {"data": "data_2", "field": "chain"},
+          {"data": "data_3", "field": "chain"}
+        ],
+        "sort": true
+      },
+      "range": "category"
+    },
+    {
+      "name": "size",
+      "type": "linear",
+      "domain": {"data": "data_3", "field": "PercentOfLoc"},
+      "range": [0, 361],
+      "zero": true
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Porcentaje de Ventas",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "zindex": 1
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Ranking",
+      "labelOverlap": true,
+      "zindex": 1
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "symbolType": "circle",
+      "title": "chain",
+      "encode": {"symbols": {"update": {"opacity": {"value": 0.7}}}}
+    },
+    {
+      "size": "size",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "symbolType": "circle",
+      "title": "PercentOfLoc",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "black"},
+            "fillOpacity": {"value": 0.7},
+            "opacity": {"value": 0.7},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ]
+}
+    
+    
+    
+      
+      ;
+
+      // Embed the visualization in the container with id `vis`
+      vegaEmbed('#tres', vlSpec2);
+    </script>
+  </body>
+</html>
